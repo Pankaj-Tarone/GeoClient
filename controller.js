@@ -55,11 +55,11 @@ function checknewzoom(evt) {
 }
 
 console.log('controller js');
-var selectedService = document.getElementById('serviceType');
-var selectedServer = document.getElementById('serverURL');
-var controller = document.getElementById('controller');
+var selectedService = el('serviceType');
+var selectedServer = el('serverURL');
+var controller = el('controller');
 var layers = null;
-var xmlDOM = document.getElementById('xmlDOM');
+var xmlDOM = el('xmlDOM');
 var capabilities = null
 var BASE_SERVER_GetCap_URL = null;
 var BASE_REQUEST_URL = null;
@@ -103,10 +103,10 @@ $("#serviceType").change(function() {
   switch (selectedServer.value) {
     case('GeoServer'):
       // console.log(BASE_SERVER_GetCap_URL+'%s&version=1.1.1&request=GetCapabilities', BASE_REQUEST_URL);
-      request_URL = BASE_SERVER_GetCap_URL + BASE_REQUEST_URL + '&version=1.1.1&request=GetCapabilities'
+      request_URL = BASE_SERVER_GetCap_URL + BASE_REQUEST_URL + '&version=1.1.1&request=GetCapabilities';
       break;
     case('OpenGIS'):
-      request_URL = BASE_SERVER_GetCap_URL + BASE_REQUEST_URL + '/1.1.1/capabilities_1_1_1.xml'
+      request_URL = BASE_SERVER_GetCap_URL + BASE_REQUEST_URL + '/1.1.1/capabilities_1_1_1.xml';
       break;
   }
   console.log(request_URL);
@@ -129,7 +129,7 @@ $("#serviceType").change(function() {
       displayCaps()
     },
     error: function(xhr, staus, error) {
-      console.log('error in ajax', status, error)
+      console.log('error in ajax', status, error);
     }
   });
   // console.log(BASE_REQUEST_URL);
@@ -181,24 +181,21 @@ function displayCaps() {
   $('#capabilities').change(function() {
     switch (selectedService.value) {
       case('WMS'):
-        // console.log(document.getElementById('capabilities').value)
-        serviceChoice = 'bbox=-130,24,-66,50&Format=image/png&request=' + capabilities[document.getElementById('capabilities').value].label
+        serviceChoice = 'bbox=-130,24,-66,50&Format=image/png&request=' + capabilities[el('capabilities').value].label
         console.log(serviceChoice);
         break;
       case('WFS'):
-        displayWFSParams(capabilities[document.getElementById('capabilities').selectedIndex - 1].value);
+        displayWFSParams(capabilities[el('capabilities').selectedIndex - 1].value);
         break;
       case('WCS'):
-        displayWCSParams(capabilities[document.getElementById('capabilities').selectedIndex - 1].value);
+        displayWCSParams(capabilities[el('capabilities').selectedIndex - 1].value);
         break;
     }
-    // getRequestParams(capabilities[document.getElementById('capabilities').selectedIndex-1].value)
-    // console.log('cap',document.getElementById('capabilities').selectedIndex);
   })
   var URL = ''
   $('#layers').change(function() {
     console.log('firing query');
-    URL = 'http://localhost:8080/geoserver/wms?' + serviceChoice + '&layers=' + layers[document.getElementById('layers').value].children[0].innerHTML + '&width=550&height=250&srs=EPSG:4326'
+    URL = 'http://localhost:8080/geoserver/wms?' + serviceChoice + '&layers=' + layers[el('layers').value].children[0].innerHTML + '&width=550&height=250&srs=EPSG:4326'
     console.log(URL);
   })
   $('#button').click(function() {
