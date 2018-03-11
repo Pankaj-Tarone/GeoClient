@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>GeoClient V1</title>
+  <!-- CSS files -->
+
+  <link rel="stylesheet" href="https://openlayers.org/en/v3.20.1/css/ol.css" type="text/css">
+  <!--<link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css">-->
+
+
+  <!-- SCRIPTS  -->
+  <script src="https://openlayers.org/en/v3.20.1/build/ol.js" type="text/javascript"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script type="text/javascript" src="xml2json.js"></script>
+  <style>
+      .getroute {
+        top: 130px;
+        left: .5em;
+      }
+      .ol-touch .getroute {
+        top: 80px;
+      }
+
+      .geocenter {
+        top: 170px;
+        left: .5em;
+      }
+      .ol-touch .geocenter {
+        top: 80px;
+      }
+    </style>
+</head>
+<body>
+  <div id="heading"></div>
+  <div id="controller">
+    <select id="serverURL">
+      <option value="" selected disabled hidden>Server</option>
+      <option value="GeoServer">GeoServer</option>
+      <option value="OpenGIS">OpenGIS</option>
+    </select>
+    <select id="serviceType">
+      <option value="" selected disabled hidden>Service Type</option>
+      <option value="WMS">WMS</option>
+      <option value="WFS">WFS</option>
+      <option value="WCS">WCS</option>
+    </select>
+  </div>
+  <div id="xmlDOM">
+  </div>
+  <div id="overlay"></div>
+  <div id="map" class="map" style="height:300px; width:300px;"></div>
+<script src="map.js"></script>
+<script src="controller.js"></script>
+  <script type="text/javascript">
+
+  </script>
+</body>
+</html>
