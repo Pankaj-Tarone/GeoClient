@@ -422,7 +422,7 @@ function displayCaps() {
    html = '<select id="layers">';
    html += "<option value='' selected disabled hidden>Layers</option>";
     for(i = 1; i < layers.length; i++) {
-        html += "<option value='"+layers[i]+"'>"+layers[i].children[1].innerHTML+"</option>";
+        html += "<option value='"+i+"'>"+layers[i].children[1].innerHTML+"</option>";
     }
     html += '</select>';
    // console.log(html);
@@ -431,6 +431,8 @@ function displayCaps() {
      $('#layers').remove()
    }
    $('#controller').append(html);
+   html='<button id="button">fire</button>'
+   $('#controller').append(html);
    $('#capabilities').selectedIndex = 0;
    $('#layers').selectedIndex = 0;
    // console.log($('#controller').find('#capabilities'))
@@ -438,7 +440,7 @@ function displayCaps() {
      switch (selectedService.value) {
        case('WMS'):
        // console.log(document.getElementById('capabilities').value)
-         serviceChoice='bbox=-130,24,-66,50&styles=population&Format=image/png&request='+capabilities[document.getElementById('capabilities').value].label
+         serviceChoice='bbox=-130,24,-66,50&Format=image/png&request='+capabilities[document.getElementById('capabilities').value].label
          console.log(serviceChoice)
          break;
        case('WFS'):
@@ -451,10 +453,36 @@ function displayCaps() {
      // getRequestParams(capabilities[document.getElementById('capabilities').selectedIndex-1].value)
      // console.log('cap',document.getElementById('capabilities').selectedIndex);
      })
+     var URL=''
      $('#layers').change(function() {
        console.log('firing query');
-       URL=serviceChoice+'&layers='+layers[document.getElementById('layers').value]+'&width=550&height=250&srs=EPSG:4326'
+       URL='http://localhost:8080/geoserver/wms?'+serviceChoice+'&layers='+layers[document.getElementById('layers').value].children[0].innerHTML+'&width=550&height=250&srs=EPSG:4326'
        console.log(URL);
+     })
+     $('#button').click(function(){
+       console.log('fire',URL)
+       $.ajax({
+         url: URL,
+         success: function(result) {
+           // console.log('parsing string to xml');
+           // console.log(result);
+           var newlayer = new ol.layer.Image({
+            source: new ol.source.ImageStatic({
+              attributions: '© <a href="http://xkcd.com/license.html">xkcd</a>',
+              url: URL,
+              projection: 'EPSG:4326',
+              imageExtent: [-130,24,-66,50]
+            })
+          })
+          console.log(newlayer)
+          console.log('adding');
+          map.addLayer(newlayer);
+
+         },
+         error: function(xhr, staus, error) {
+           console.log('error in fire ajax',status, error)
+         }
+       });
      })
 }
 
@@ -481,6 +509,7 @@ function parseWMS(xml) {
         capabilities=arr;
         console.log(dom.getElementsByTagName('Layer'))
         layers=dom.getElementsByTagName('Layer')
+        console.log(layers)
 
 }
 
