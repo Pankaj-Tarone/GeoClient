@@ -280,3 +280,24 @@ function parseWCS(xml) {
   // console.log(arr);
   capabilities = arr;
 }
+function cab (capab) {
+  switch (capab) {
+      case('GetMap'):
+        serviceChoice = 'bbox=-130,24,-66,50&Format=image/png&request=' + capab
+        console.log(serviceChoice);
+        break;
+          case('GetStyles'):
+        serviceChoice = 'bbox=-130,24,-66,50&Format=image/png&request=' + capab
+        console.log(serviceChoice);
+     case('DiscribeLayer'):
+        serviceChoice = 'bbox=-130,24,-66,50&Format=image/png&request=' + capab
+        console.log(serviceChoice);
+          case('GetFeatureInfo'):
+        serviceChoice = '?request=GetLegendGraphic&format=image%2Fpng&width=20&height=20&layer=topp%3' + 
+        console.log(serviceChoice);
+      case('GetLegendGraphic'):
+        serviceChoice = '?request=GetLegendGraphic&format=image%2Fpng&width=20&height=20&layer='
+        break;
+    }
+
+}
