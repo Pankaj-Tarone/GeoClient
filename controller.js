@@ -8,13 +8,17 @@ var capabilities = null
 var BASE_SERVER_GetCap_URL = null;
 var BASE_REQUEST_URL = null;
 var request_URL = null;
+var capability=null;
 
 selectedService.selectedIndex = 0;
 selectedServer.selectedIndex = 0;
 
 $("#serverURL").change(function() {
-  console.log(selectedServer.value);
+  // console.log(selectedServer.value);
   selectedService.selectedIndex = 0;
+  if($('#capabilities')){
+    $('#capabilities').remove()
+  }
   switch (selectedServer.value) {
     case('GeoServer'):
       BASE_SERVER_GetCap_URL = 'http://localhost:8080/geoserver/ows?service=';
@@ -23,11 +27,11 @@ $("#serverURL").change(function() {
       BASE_SERVER_GetCap_URL = 'http://schemas.opengis.net/';
       break;
   }
-  console.log(BASE_SERVER_GetCap_URL);
+  // console.log(BASE_SERVER_GetCap_URL);
 });
 
 $("#serviceType").change(function() {
-  console.log(selectedService.value);
+  // console.log(selectedService.value);
   switch (selectedService.value) {
     case('WMS'):
       BASE_REQUEST_URL = 'wms';
@@ -51,8 +55,9 @@ $("#serviceType").change(function() {
   console.log(request_URL);
   $.ajax({
     url: request_URL,
+    dataType: 'text',
     success: function(result) {
-      console.log('parsing string to xml');
+      // console.log('parsing string to xml');
       switch (selectedService.value) {
         case('WMS'):
           parseWMS(result);
@@ -65,10 +70,15 @@ $("#serviceType").change(function() {
           break;
       }
       displayCaps()
+    },
+    error: function(xhr, staus, error) {
+      console.log('error in ajax',status, error)
     }
   });
-  console.log(BASE_REQUEST_URL);
+  // console.log(BASE_REQUEST_URL);
 })
+
+
 
 function StringToXMLDom(string) {
   var xmlDoc = null;
@@ -83,18 +93,47 @@ function StringToXMLDom(string) {
 
 function displayCaps() {
   var html = '<select id="capabilities">';
+  html += "<option value='' selected disabled hidden>Capabilities</option>";
    for(i = 0; i < capabilities.length; i++) {
-       html += "<option value='"+capabilities[i].label+"'>"+capabilities[i].label+"</option>";
+       html += "<option value='"+capabilities[i].value+"'>"+capabilities[i].label+"</option>";
    }
    html += '</select>';
-   console.log(html);
+   // console.log(html);
+   if($('#capabilities')){
+     $('#capabilities').remove()
+   }
    $('#controller').append(html);
+   $('#capabilities').selectedIndex = 0;
+   // console.log($('#controller').find('#capabilities'))
+   $('#capabilities').change(function() {
+     switch (selectedService.value) {
+       case('WMS'):
+         displayWMSParams(capabilities[document.getElementById('capabilities').selectedIndex-1].value);
+         break;
+       case('WFS'):
+         displayWFSParams(capabilities[document.getElementById('capabilities').selectedIndex-1].value)
+         break;
+       case('WCS'):
+         displayWCSParams(capabilities[document.getElementById('capabilities').selectedIndex-1].value)
+         break;
+     }
+     // getRequestParams(capabilities[document.getElementById('capabilities').selectedIndex-1].value)
+     // console.log('cap',document.getElementById('capabilities').selectedIndex);
+     })
 }
+
+function displayWMSParams(req) {
+  console.log('wms',req.childElementCount);
+
+  reqChildren=req.children;
+  console.log(reqChildren)
+}
+
 
 function parseWMS(xml) {
 
         var dom = StringToXMLDom(xml);
-        console.log(dom);
+        // console.log(dom);
         var requestsTag = dom.getElementsByTagName('Request')[0]
         // console.log(requestsTag)
         var caps = requestsTag.children;
@@ -102,34 +141,37 @@ function parseWMS(xml) {
         for (var i = 1; i < caps.length; i++) {
           arr.push({label:caps[i].nodeName,value:caps[i]});
         }
-        console.log(arr);
+        // console.log(arr);
         capabilities=arr;
+        console.log(dom.getElementsByTagName('Layer'))
 }
 
 function parseWFS(xml) {
   var dom = StringToXMLDom(xml);
-  console.log(dom);
-  var requestsTag = dom.getElementsByTagName('Request')[0]
+  // console.log(dom);
+  var requestsTag = dom.getElementsByTagName('ows:OperationsMetadata')[0]
   // console.log(requestsTag)
   var caps = requestsTag.children;
   var arr = [];
   for (var i = 1; i < caps.length; i++) {
-    arr.push({label:caps[i].nodeName,value:caps[i]});
+    // console.log(caps[i].attributes[0].nodeValue)
+    arr.push({label:caps[i].attributes[0].nodeValue,value:caps[i]});
   }
-  console.log(arr);
+  // console.log(arr);
   capabilities=arr;
 }
 
 function parseWCS(xml) {
   var dom = StringToXMLDom(xml);
-  console.log(dom);
-  var requestsTag = dom.getElementsByTagName('Request')[0]
+  // console.log(dom);
+  var requestsTag = dom.getElementsByTagName('ows:OperationsMetadata')[0]
   // console.log(requestsTag)
   var caps = requestsTag.children;
   var arr = [];
   for (var i = 1; i < caps.length; i++) {
-    arr.push({label:caps[i].nodeName,value:caps[i]});
+    // console.log(caps[i].attributes[0].nodeValue)
+    arr.push({label:caps[i].attributes[0].nodeValue,value:caps[i]});
   }
-  console.log(arr);
+  // console.log(arr);
   capabilities=arr;
 }
